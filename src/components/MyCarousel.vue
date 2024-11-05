@@ -26,7 +26,7 @@
     <div id="links">
         
     </div>
-    <button type="button" @click="test">test</button>
+    
 
 
 </template>
