@@ -23,9 +23,11 @@
         </button>
         
     </div>
-    <div id="links">
-        
-    </div>
+    
+    <ul>
+        <li v-for="el in chosenImgsListCalc"> <a href="el">{{ el }}</a></li>
+    </ul>
+
     
 
 
@@ -33,14 +35,17 @@
 
 
 <script>
+
+
 export default {
     props: {
-        imagesArray: Object,
+        imagesArray: Array,
     },
     data() {
         return {
             imagesAmount: null,
             isButtonDisabled: false,
+            
     
         }
     },
@@ -53,9 +58,28 @@ export default {
         this.initCaro()
 
     },
-    
+    computed: {
+        chosenImgsListCalc() {
+            let chosenImgsList = []
+            this.imagesArray.forEach((element) => {
+                if (element.chosen == true) {
+                    chosenImgsList.push(element.url)
+                }
+            })
+            
+        
+            
+            return chosenImgsList.sort()
+
+
+        }
+    },
     methods: {
         initCaro() {
+
+            
+            
+            // const copy 
             const imagesHolder = document.getElementById("images-holder")
 
             console.log("check")
@@ -67,9 +91,10 @@ export default {
                 let holderDiv = document.createElement('div')
                 holderDiv.classList.add('card')
                 
-
+                let strUrl = this.imagesArray[i].url
+                let obj = holderDiv
                 
-                holderDiv.addEventListener('click', () => this.chooseImg(this.imagesArray[i], holderDiv));
+                holderDiv.addEventListener('click', () => this.chooseImg(strUrl, obj));
 
                 if (this.imagesArray[i].chosen) {
                     holderDiv.classList.add("chosen-card")
@@ -110,8 +135,12 @@ export default {
                     if (this.imagesArray[i].chosen) {
                         holderDiv.classList.add("chosen-card")
                     }
-                    holderDiv.addEventListener('click', () => this.chooseImg(this.imagesArray[i-1], holderDiv));
-                    
+
+                    let strUrl = this.imagesArray[i].url
+                    let obj = holderDiv
+
+                    holderDiv.addEventListener('click', () => this.chooseImg(strUrl, obj));
+                    // alert(this.imagesArray[i].url)
                     holderDiv.classList.add('card-animate-in')
                     
                     
@@ -169,7 +198,12 @@ export default {
 
             let holderDiv = document.createElement('div')
             holderDiv.classList.add('card')
-            holderDiv.addEventListener('click', () => this.chooseImg(this.imagesArray[0], holderDiv));
+
+
+            let strUrl = this.imagesArray[0].url
+            let obj = holderDiv
+            
+            holderDiv.addEventListener('click', () => this.chooseImg(strUrl, obj));
 
             if (this.imagesArray[0].chosen) {
                 holderDiv.classList.add("chosen-card")
@@ -233,7 +267,13 @@ export default {
 
                     let holderDiv = document.createElement('div')
                     holderDiv.classList.add('card')
-                    holderDiv.addEventListener('click', () => this.chooseImg(this.imagesArray[1], holderDiv));
+
+                    
+                    let strUrl = this.imagesArray[1].url
+                    let obj = holderDiv
+
+                    
+                    holderDiv.addEventListener('click', () => this.chooseImg(strUrl, obj));
                     if (this.imagesArray[1].chosen) {
                     holderDiv.classList.add("chosen-card")
                     }
@@ -274,7 +314,10 @@ export default {
                         element.isShowed = true
                         let holderDiv = document.createElement('div')
                         holderDiv.classList.add('card')
-                        holderDiv.addEventListener('click', () => this.chooseImg(element, holderDiv));
+                        let strUrl = element.url
+                        let obj = holderDiv
+
+                        holderDiv.addEventListener('click', () => this.chooseImg(element, obj));
                         if (element.chosen) {
                             holderDiv.classList.add("chosen-card")
                         }
@@ -297,22 +340,46 @@ export default {
                 this.imagesAmount = 4
             }
         },
-        chooseImg(card, target) {
-            console.log(target);
-            target.classList.add("chosen-card")
-            console.log("choose");
+        findCard(url) {
+            console.log(this.imagesArray)
 
+
+            for (let i = 0; i < this.imagesArray.length; i++) {
+                if (this.imagesArray[i].url == url) {
+                    
+                    console.log(this.imagesArray[i].url);
+                    console.log(i);
+                    
+                    return i
+                }
+            }
+        },
+        chooseImg(imgUrl, target) {
+        // chooseImg(imgUrl, target) {
+            {
+                console.log('Argument 1:', imgUrl);
+                console.log('Argument 2:', target);
+
+            };
+
+            // let card = this.findCard(imgUrl)
+            console.log(this.findCard(imgUrl));
+            
+            let card = this.imagesArray[this.findCard(imgUrl)]
+
+            
+            console.log(card);
+
+            // console.log(target);
             if (!card.chosen) {
-
-                const linksHolder = document.getElementById("links")
-                linksHolder
-                let linkHolder = document.createElement("p")
-                let newLink = document.createElement("a")
-                linkHolder.appendChild(newLink)
-                newLink.href = card.url
-                newLink.innerHTML = card.url
-                linksHolder.appendChild(linkHolder)
+                target.classList.add("chosen-card")
+                console.log("choose");
+                
                 card.chosen = true
+            } else if (card.chosen) {
+
+                target.classList.remove("chosen-card")
+                card.chosen = false
             }
 
 
